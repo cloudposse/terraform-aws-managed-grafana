@@ -30,3 +30,12 @@ variable "permission_type" {
   description = "The permission type of the workspace. If `SERVICE_MANAGED` is specified, the IAM roles and IAM policy attachments are generated automatically. If `CUSTOMER_MANAGED` is specified, the IAM roles and IAM policy attachments will not be created."
   default     = "SERVICE_MANAGED"
 }
+
+variable "sso_role_associations" {
+  type = list(object({
+    role      = string
+    group_ids = list(string)
+  }))
+  description = "A list of role to group ID list associations for granting Amazon Grafana access. Only used if `var.authentication_providers` includes `AWS_SSO`"
+  default     = []
+}

@@ -1,6 +1,8 @@
 locals {
-  enabled                   = module.this.enabled
-  prometheus_policy_enabled = local.enabled && var.prometheus_policy_enabled
+  enabled                          = module.this.enabled
+  prometheus_policy_enabled        = local.enabled && var.prometheus_policy_enabled
+  sso_role_association_enabled     = local.enabled && contains(var.authentication_providers, "AWS_SSO")
+  additional_allowed_roles_enabled = local.enabled && length(var.additional_allowed_roles) > 0
 }
 
 resource "aws_grafana_workspace" "this" {
@@ -48,9 +50,9 @@ resource "aws_iam_role" "this" {
   # Allow this role to assume other roles.
   # Used for cross-account access
   dynamic "inline_policy" {
-    for_each = length(var.additional_allowed_roles) > 0 ? [1] : []
+    for_each = local.additional_allowed_roles_enabled ? [1] : []
     content {
-      name = "${module.this.id}-allowed-roles"
+      name = module.additional_allowed_role_label.id
       policy = jsonencode({
         Version = "2012-10-17"
         Statement = [
@@ -67,10 +69,32 @@ resource "aws_iam_role" "this" {
   dynamic "inline_policy" {
     for_each = local.prometheus_policy_enabled ? [1] : []
     content {
-      name   = "${module.this.id}-aps"
+      name   = module.prometheus_policy_label.id
       policy = data.aws_iam_policy_document.aps[0].json
     }
   }
+}
+
+module "additional_allowed_role_label" {
+  source  = "cloudposse/label/null"
+  version = "0.25.0"
+
+  enabled = local.additional_allowed_roles_enabled
+
+  attributes = ["allowed-roles"]
+
+  context = module.this.context
+}
+
+module "prometheus_policy_label" {
+  source  = "cloudposse/label/null"
+  version = "0.25.0"
+
+  enabled = local.prometheus_policy_enabled
+
+  attributes = ["aps"]
+
+  context = module.this.context
 }
 
 # See "Amazon Managed Service for Prometheus"
@@ -88,4 +112,15 @@ data "aws_iam_policy_document" "aps" {
     ]
     resources = ["*"]
   }
+}
+
+resource "aws_grafana_role_association" "sso" {
+  for_each = local.sso_role_association_enabled ? {
+    for association in var.sso_role_associations : association.role => association
+  } : {}
+
+  role      = each.value.role
+  group_ids = each.value.group_ids
+
+  workspace_id = aws_grafana_workspace.this[0].id
 }
