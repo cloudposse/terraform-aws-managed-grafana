@@ -8,5 +8,4 @@ stage = "test"
 
 name = "example"
 
-example_input = "Hello, world!"
-
+test_availability_zone = "us-east-2a"

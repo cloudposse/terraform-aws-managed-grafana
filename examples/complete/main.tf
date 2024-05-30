@@ -1,7 +1,30 @@
-module "example" {
+data "aws_vpc" "default" {
+  default = true
+}
+
+data "aws_subnets" "tester" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
+data "aws_security_groups" "tester" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
+module "managed_grafana" {
   source = "../.."
 
-  example = coalesce(var.example_input_override, var.example_input)
+  prometheus_policy_enabled = true
+
+  vpc_configuration = {
+    subnet_ids         = data.aws_subnets.tester.ids
+    security_group_ids = data.aws_security_groups.tester.ids
+  }
 
   context = module.this.context
 }
