@@ -62,6 +62,7 @@ For automated tests of the complete example using [bats](https://github.com/bats
 locals {
   enabled = module.this.enabled
 
+  # These are pulled from the output of the cloudposse/terraform-aws-managed-prometheus module
   additional_allowed_roles = compact([for prometheus in module.prometheus : prometheus.outputs.access_role_arn])
 }
 
