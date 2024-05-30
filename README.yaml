@@ -1,22 +1,5 @@
-#         DELETE ME
-#
-# The above is the README configuration for the Example module itself.
-# Delete from here to the top of file and fill in the template below
-########################################################################################################################
-########################################################################################################################
-########################################################################################################################
-
-
-#
-# This is the canonical configuration for the `README.md`
-# Run `make readme` to rebuild the `README.md`
-#
-
 # Name of this project
-name: terraform-example-module
-
-# Logo for this project
-#logo: docs/logo.png
+name: terraform-aws-managed-grafana
 
 # License of this project
 license: "APACHE2"
@@ -28,19 +11,19 @@ copyrights:
     year: "2021"
 
 # Canonical GitHub repo
-github_repo: cloudposse/terraform-example-module
+github_repo: cloudposse/terraform-aws-managed-grafana
 
 # Badges to display
 badges:
   - name: Last Updated
-    image: https://img.shields.io/github/last-commit/None.svg?style=for-the-badge
-    url: https://github.com/None/commits
+    image: https://img.shields.io/github/last-commit/cloudposse/terraform-aws-managed-grafana.svg?style=for-the-badge
+    url: https://github.com/cloudposse/terraform-aws-managed-grafana/commits
   - name: Latest Release
-    image: https://img.shields.io/github/release/None.svg?style=for-the-badge
-    url: https://github.com/None/releases/latest
+    image: https://img.shields.io/github/release/cloudposse/terraform-aws-managed-grafana.svg?style=for-the-badge
+    url: https://github.com/cloudposse/terraform-aws-managed-grafana/releases/latest
   - name: Last Updated
-    image: https://img.shields.io/github/last-commit/None.svg?style=for-the-badge
-    url: https://github.com/None/commits
+    image: https://img.shields.io/github/last-commit/cloudposse/terraform-aws-managed-grafana.svg?style=for-the-badge
+    url: https://github.com/cloudposse/terraform-aws-managed-grafana/commits
   - name: Slack Community
     image: https://slack.cloudposse.com/for-the-badge.svg
     url: https://slack.cloudposse.com
@@ -68,12 +51,13 @@ references:
 
 # Short description of this project
 description: |-
-  Short
-  description
+  This module is responsible for provisioning an Amazon Managed Grafana workspace.
 
 # Introduction to the project
 introduction: |-
-  This is an introduction.
+  Amazon Managed Grafana is a fully managed service for Grafana, a popular open-source analytics platform that enables you to query, visualize, and alert on your metrics, logs, and traces.
+
+  Deploy this module alongside [terraform-aws-managed-prometheus](https://github.com/cloudposse/terraform-aws-managed-prometheus) to visual metrics or add a Grafana Loki data source to visualize logs.
 
 # How to use this module. Should be an easy example to copy and paste.
 usage: |-
@@ -83,40 +67,60 @@ usage: |-
   (which tests and deploys the example on AWS), see [test](test).
 
   ```hcl
-  # Create a standard label resource. See [null-label](https://github.com/cloudposse/terraform-null-label/#terraform-null-label--)
-  module "label" {
-    source  = "cloudposse/label/null"
-    # Cloud Posse recommends pinning every module to a specific version, though usually you want to use the current one
-    # version = "x.x.x"
+  locals {
+    enabled = module.this.enabled
 
-    namespace = "eg"
-    name      = "example"
+    # These are pulled from the output of the cloudposse/terraform-aws-managed-prometheus module
+    additional_allowed_roles = compact([for prometheus in module.prometheus : prometheus.outputs.access_role_arn])
   }
 
-  module "example" {
-    source  = "cloudposse/*****/aws"
+  module "security_group" {
+    source  = "cloudposse/security-group/aws"
+    version = "2.2.0"
+
+    enabled = local.enabled && var.private_network_access_enabled
+
+    allow_all_egress = true
+    rules            = []
+    vpc_id           = module.vpc.outputs.vpc_id
+
+    context = module.this.context
+  }
+
+  module "managed_grafana" {
+    source  = "cloudposse/managed-grafana/aws"
     # Cloud Posse recommends pinning every module to a specific version
     # version = "x.x.x"
 
-    example = "Hello world!"
+    enabled = local.enabled
 
-    context = module.label.this
+    prometheus_policy_enabled = var.prometheus_policy_enabled
+    additional_allowed_roles  = local.additional_allowed_roles
+
+    sso_role_associations = [
+      {
+        "role" = "ADMIN"
+        "group_ids" = ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
+      }
+    ]
+
+    vpc_configuration = var.private_network_access_enabled ? {
+      subnet_ids         = module.vpc.outputs.private_subnet_ids
+      security_group_ids = [module.security_group.id]
+    } : {}
+
+    context = module.this.context
   }
   ```
 
 # Example usage
 examples: |-
   Here is an example of using this module:
-  - [`examples/complete`](https://github.com/cloudposse/terraform-example-module/) - complete example of using this module
-
-# How to get started quickly
-quickstart: |-
-  Here's how to get started...
+  - [`examples/complete`](https://github.com/cloudposse/terraform-aws-managed-grafana/) - complete example of using this module
 
 # Other files to include in this README from the project folder
 include:
   - "docs/targets.md"
   - "docs/terraform.md"
 
-# Contributors to this project
 contributors: []

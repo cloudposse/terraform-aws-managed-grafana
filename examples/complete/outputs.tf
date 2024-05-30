@@ -1,14 +1,14 @@
-output "id" {
-  description = "ID of the created example"
-  value       = module.example.id
+output "workspace_id" {
+  description = "The ID of the Amazon Managed Grafana workspace"
+  value       = module.managed_grafana.workspace_id
 }
 
-output "example" {
-  description = "Output \"example\" from example module"
-  value       = module.example.example
+output "workspace_arn" {
+  description = "The ARN of the Amazon Managed Grafana workspace"
+  value       = module.managed_grafana.workspace_arn
 }
 
-output "random" {
-  description = "Output \"random\" from example module"
-  value       = module.example.random
+output "workspace_endpoint" {
+  description = "The returned URL of the Amazon Managed Grafana workspace"
+  value       = module.managed_grafana.workspace_endpoint
 }

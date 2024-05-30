@@ -1,14 +1,14 @@
-output "id" {
-  description = "ID of the created example"
-  value       = module.this.enabled ? module.this.id : null
+output "workspace_id" {
+  description = "The ID of the Amazon Managed Grafana workspace"
+  value       = local.enabled ? aws_grafana_workspace.this[0].id : ""
 }
 
-output "example" {
-  description = "Example output"
-  value       = module.this.enabled ? local.example : null
+output "workspace_arn" {
+  description = "The ARN of the Amazon Managed Grafana workspace"
+  value       = local.enabled ? aws_grafana_workspace.this[0].arn : ""
 }
 
-output "random" {
-  description = "Stable random number for this example"
-  value       = module.this.enabled ? join("", random_integer.example[*].result) : null
+output "workspace_endpoint" {
+  description = "The URL of the Amazon Managed Grafana workspace"
+  value       = local.enabled ? aws_grafana_workspace.this[0].endpoint : ""
 }
