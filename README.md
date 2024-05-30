@@ -27,7 +27,7 @@
 
 -->
 
-This component is responsible for provisioning an Amazon Managed Grafana workspace.
+This module is responsible for provisioning an Amazon Managed Grafana workspace.
 
 
 > [!TIP]
