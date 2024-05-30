@@ -20,6 +20,7 @@ module "managed_grafana" {
   source = "../.."
 
   prometheus_policy_enabled = true
+  authentication_providers  = ["SAML"]
 
   vpc_configuration = {
     subnet_ids         = data.aws_subnets.tester.ids

@@ -9,10 +9,9 @@ resource "aws_grafana_workspace" "this" {
   name        = module.this.id
   description = "Amazon Managed Grafana for ${module.this.id}"
 
-  # TODO make all of these variables in submodule with these defaults
   account_access_type      = "CURRENT_ACCOUNT"
-  authentication_providers = ["AWS_SSO"]
-  permission_type          = "SERVICE_MANAGED"
+  authentication_providers = var.authentication_providers
+  permission_type          = var.permission_type
   role_arn                 = aws_iam_role.this[0].arn
   data_sources             = []
 

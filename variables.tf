@@ -18,3 +18,15 @@ variable "vpc_configuration" {
   description = "If defined, this map defines the VPC configuration to connect your Grafana workspace to a private network"
   default     = null
 }
+
+variable "authentication_providers" {
+  type        = list(string)
+  description = "The authentication providers for the workspace. Valid values are `AWS_SSO`, `SAML`, or both."
+  default     = ["AWS_SSO"]
+}
+
+variable "permission_type" {
+  type        = string
+  description = "The permission type of the workspace. If `SERVICE_MANAGED` is specified, the IAM roles and IAM policy attachments are generated automatically. If `CUSTOMER_MANAGED` is specified, the IAM roles and IAM policy attachments will not be created."
+  default     = "SERVICE_MANAGED"
+}
