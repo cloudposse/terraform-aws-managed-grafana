@@ -88,23 +88,19 @@ module "managed_grafana" {
   prometheus_policy_enabled = var.prometheus_policy_enabled
   additional_allowed_roles  = local.additional_allowed_roles
 
+  sso_role_associations = [
+    {
+      "role" = "ADMIN"
+      "group_ids" = ["xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"]
+    }
+  ]
+
   vpc_configuration = var.private_network_access_enabled ? {
     subnet_ids         = module.vpc.outputs.private_subnet_ids
     security_group_ids = [module.security_group.id]
   } : {}
 
   context = module.this.context
-}
-
-resource "aws_grafana_role_association" "sso" {
-  for_each = local.enabled ? {
-    for association in var.sso_role_associations : association.role => association
-  } : {}
-
-  role      = each.value.role
-  group_ids = each.value.group_ids
-
-  workspace_id = module.managed_grafana.workspace_id
 }
 ```
 
