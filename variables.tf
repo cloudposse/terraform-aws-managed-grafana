@@ -39,3 +39,10 @@ variable "sso_role_associations" {
   description = "A list of role to group ID list associations for granting Amazon Grafana access. Only used if `var.authentication_providers` includes `AWS_SSO`"
   default     = []
 }
+
+variable "data_sources" {
+  type        = list(string)
+  description = "The data sources for the workspace. Valid values are AMAZON_OPENSEARCH_SERVICE, ATHENA, CLOUDWATCH, PROMETHEUS, REDSHIFT, SITEWISE, TIMESTREAM, XRAY"
+  default     = []
+}
+

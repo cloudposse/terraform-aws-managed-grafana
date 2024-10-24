@@ -15,7 +15,7 @@ resource "aws_grafana_workspace" "this" {
   authentication_providers = var.authentication_providers
   permission_type          = var.permission_type
   role_arn                 = aws_iam_role.this[0].arn
-  data_sources             = []
+  data_sources             = var.data_sources
 
   dynamic "vpc_configuration" {
     for_each = var.vpc_configuration != null ? [1] : []
