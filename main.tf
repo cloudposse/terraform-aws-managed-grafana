@@ -120,7 +120,8 @@ resource "aws_grafana_role_association" "sso" {
   } : {}
 
   role      = each.value.role
-  group_ids = each.value.group_ids
+  group_ids = try(each.value.group_ids, null)
+  user_ids  = try(each.value.user_ids, null)
 
   workspace_id = aws_grafana_workspace.this[0].id
 }
