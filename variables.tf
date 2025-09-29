@@ -47,3 +47,8 @@ variable "data_sources" {
   default     = []
 }
 
+variable "account_access_type" {
+  type        = string
+  description = "The account access type for the workspace. Valid values are `CURRENT_ACCOUNT` or `ALL_ACCOUNTS`"
+  default     = "CURRENT_ACCOUNT"
+}
