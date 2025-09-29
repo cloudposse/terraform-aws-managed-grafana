@@ -11,7 +11,7 @@ resource "aws_grafana_workspace" "this" {
   name        = module.this.id
   description = "Amazon Managed Grafana for ${module.this.id}"
 
-  account_access_type      = "CURRENT_ACCOUNT"
+  account_access_type      = var.account_access_type
   authentication_providers = var.authentication_providers
   permission_type          = var.permission_type
   role_arn                 = aws_iam_role.this[0].arn
