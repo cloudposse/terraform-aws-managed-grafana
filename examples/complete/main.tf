@@ -1,5 +1,5 @@
 module "vpc" {
-  source = "cloudposse/vpc/aws"
+  source  = "cloudposse/vpc/aws"
   version = "2.2.0"
 
   ipv4_primary_cidr_block = "172.16.0.0/16"
@@ -8,14 +8,14 @@ module "vpc" {
 }
 
 module "subnets" {
-  source = "cloudposse/dynamic-subnets/aws"
+  source  = "cloudposse/dynamic-subnets/aws"
   version = "2.4.2"
 
-  availability_zones = ["${var.region}a", "${var.region}b"]
-  vpc_id             = module.vpc.vpc_id
-  igw_id             = [module.vpc.igw_id]
-  ipv4_cidr_block    = [module.vpc.vpc_cidr_block]
-  nat_gateway_enabled = false
+  availability_zones   = ["${var.region}a", "${var.region}b"]
+  vpc_id               = module.vpc.vpc_id
+  igw_id               = [module.vpc.igw_id]
+  ipv4_cidr_block      = [module.vpc.vpc_cidr_block]
+  nat_gateway_enabled  = false
   nat_instance_enabled = false
 
   context = module.this.context
