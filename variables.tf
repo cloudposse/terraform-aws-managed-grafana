@@ -34,9 +34,10 @@ variable "permission_type" {
 variable "sso_role_associations" {
   type = list(object({
     role      = string
-    group_ids = list(string)
+    group_ids = optional(list(string))
+    user_ids  = optional(list(string))
   }))
-  description = "A list of role to group ID list associations for granting Amazon Grafana access. Only used if `var.authentication_providers` includes `AWS_SSO`"
+  description = "A list of role to group ID and user ID list associations for granting Amazon Grafana access. Only used if `var.authentication_providers` includes `AWS_SSO`"
   default     = []
 }
 
