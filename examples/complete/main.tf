@@ -18,7 +18,7 @@ module "subnets" {
 
 module "security_group" {
   source  = "cloudposse/security-group/aws"
-  version = "2.3.0"
+  version = "2.2.0"
 
   vpc_id = module.vpc.vpc_id
 
