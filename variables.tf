@@ -49,6 +49,16 @@ variable "data_sources" {
 
 variable "account_access_type" {
   type        = string
-  description = "The account access type for the workspace. Valid values are `CURRENT_ACCOUNT` or `ALL_ACCOUNTS`"
+  description = "The type of account access for the workspace. Valid values are CURRENT_ACCOUNT and ORGANIZATION. If ORGANIZATION is specified, then organizational_units must also be present."
   default     = "CURRENT_ACCOUNT"
+  validation {
+    condition     = contains(["CURRENT_ACCOUNT", "ORGANIZATION"], var.account_access_type)
+    error_message = "account_access_type must be either CURRENT_ACCOUNT or ORGANIZATION"
+  }
+}
+
+variable "organizational_units" {
+  type        = list(string)
+  description = "A list of organizational units (OU) IDs to grant access to the workspace. Only used if `var.account_access_type` is `ORGANIZATION`"
+  default     = []
 }
