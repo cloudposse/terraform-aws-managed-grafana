@@ -62,3 +62,15 @@ variable "organizational_units" {
   description = "A list of organizational units (OU) IDs to grant access to the workspace. Only used if `var.account_access_type` is `ORGANIZATION`"
   default     = []
 }
+
+variable "configuration" {
+  type        = string
+  description = "JSON string containing the workspace configuration. Use this to enable Grafana unified alerting (`{\"unifiedAlerting\":{\"enabled\":true}}`) and/or plugin management (`{\"plugins\":{\"pluginAdminEnabled\":true}}`). See https://docs.aws.amazon.com/grafana/latest/userguide/AMG-configure-workspace.html"
+  default     = null
+}
+
+variable "grafana_version" {
+  type        = string
+  description = "The version of Grafana to support in the workspace. Supported values include `9.4`, `10.4`, `12.4`. If not specified, AMG defaults to the latest supported version."
+  default     = null
+}
