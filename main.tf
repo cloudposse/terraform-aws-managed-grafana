@@ -17,6 +17,8 @@ resource "aws_grafana_workspace" "this" {
   role_arn                 = aws_iam_role.this[0].arn
   data_sources             = var.data_sources
   organizational_units     = var.organizational_units
+  configuration            = var.configuration
+  grafana_version          = var.grafana_version
 
   dynamic "vpc_configuration" {
     for_each = var.vpc_configuration != null ? [1] : []
